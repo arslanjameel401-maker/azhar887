@@ -148,7 +148,7 @@
       <input id="loginPass" type="password" placeholder="Password" />
       <button onclick="handleLogin()">Login</button>
       <div id="loginErr" class="login-error">یوزر یا پاس ورڈ غلط ہیں۔</div>
-      <p class="note">Demo credentials: <strong>User:</strong> Azhar887 &nbsp; <strong>Pass:</strong> baba887</p>
+      <p class="note">Demo credentials: <strong>User:</strong>  &nbsp; <strong>Pass:</strong> </p>
     </div>
 
     <!-- MAIN CARD (after login) -->
@@ -194,9 +194,6 @@
   const AUTH_USER = "Azhar887";
   const AUTH_PASS = "baba887";
   const SKEY = "azharbaba_logged_in_v2";
-    const AUTH_USER = "123";
-  const AUTH_PASS = "123";
-  const SKEY = "123_logged_in_v2";
 
   function isLoggedIn(){ return sessionStorage.getItem(SKEY) === "1"; }
 
