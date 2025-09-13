@@ -1,111 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SIM Data Lookup</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Randomized SIM/CNIC Lookup</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      animation: fadeIn 1s ease-in-out;
+    body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial, sans-serif;display:flex;align-items:center;justify-content:center;height:100vh}
+    .box{background:#111;border:2px solid #c00;padding:24px;border-radius:10px;width:100%;max-width:520px;text-align:center}
+    input{width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px;background:#222;color:#fff}
+    button{width:100%;padding:12px;border-radius:8px;border:none;background:linear-gradient(90deg,#c00000,#ff0000);color:#fff;font-weight:700;cursor:pointer}
+    #response{display:none;text-align:left;background:#181818;padding:12px;border-radius:8px;margin-top:12px;white-space:pre-wrap}
+    .small{font-size:13px;color:#bbb;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🔎 Lookup by Phone or CNIC</h2>
+    <input id="q" placeholder="Phone or CNIC — ya dono (comma se): eg. 03064457887,3540275672161" />
+    <button onclick="doLookup()">🔎 Search</button>
+
+    <div id="response"></div>
+    <button id="share" style="display:none;margin-top:10px" onclick="shareWA()">📲 Share on WhatsApp</button>
+    <p class="small">نوٹ: یہ صرف ٹیسٹ/ڈمی ریکارڈز ہیں — حقیقی لوگوں کا ڈیٹا نہ ڈالیں۔</p>
+  </div>
+
+  <script>
+    // --- Helpers ---
+    function onlyDigits(s){ return (s||"").replace(/\D/g,""); }
+
+    function isLikelyCNIC(s){
+      const d = onlyDigits(s);
+      return d.length === 13; // treat 13 digits as CNIC
     }
 
-    .box {
-      background: #111;
-      border: 2px solid red;
-      box-shadow: 0 0 25px red;
-      padding: 30px 20px;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      animation: fadeIn 1s ease-in-out;
+    function isLikelyPhone(s){
+      const d = onlyDigits(s);
+      // accept local (11 digits starting 0) or international 12-13 (+92...) or short 9-10
+      return (d.length >= 9 && d.length <= 13);
     }
 
-    .box h2 {
-      color: red;
-      font-size: 24px;
-      margin-bottom: 20px;
+    function normalizePhone(s){
+      if (!s) return "";
+      let d = onlyDigits(s);
+      if (d.length === 11 && d.startsWith("0")) return "0" + d.slice(1); // keep 11-digit with leading 0
+      if (d.length === 12 && d.startsWith("92")) return "+92" + d.slice(2);
+      if (d.length === 13 && d.startsWith("092")) return "+92" + d.slice(3);
+      if (d.length === 10) return "0" + d; // maybe missing leading zero
+      if (d.length === 9) return "0" + d; 
+      if (d.length === 13 && d.startsWith("923")) return "+" + d.slice(0,3) + d.slice(3); // safeguard
+      return d;
     }
 
-    .box input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 20px;
-      font-size: 16px;
-      background: #333;
-      color: white;
-      box-shadow: inset 0 0 5px red;
+    function normalizeCNIC(s){
+      const d = onlyDigits(s);
+      if (d.length === 13) return d;
+      // if user provided with hyphens like 35202-1234567-1
+      if (d.length > 13) return d.slice(-13);
+      // pad randomly (only for fake generation) - but prefer empty if invalid
+      return d.padStart(13, "0").slice(0,13);
     }
 
-    .box button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      margin: 10px 0;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      color: white;
-      background: linear-gradient(90deg, #c00000, #ff0000);
-      box-shadow: 0 0 15px red;
-      transition: 0.3s;
+    // Random generators (fake)
+    function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+    function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+    const first = ["Ali","Ahmed","Hassan","Zain","Owais","Muhammad","Sana","Sara","Ayesha","Fatima","Bilal","Usman","Latif","Khalid","Imran"];
+    const last = ["Khan","Malik","Raza","Ali","Butt","Hussain","Sheikh","Qureshi","Nawaz","Bashir","Latif","Farooq"];
+    const areas = ["Model Town","Clifton","DHA","Cantt","Mandi Faizabad","Gulberg","Saddar","Nazimabad","Johar Town","Shadman","Garden"];
+    const streets = ["Block A","Sector 7","Street 5","Near Masjid","Opp Market","Main Bazar","Gal Po","New Town","Phase 2"];
+    const ops = ["Jazz","Telenor","Zong","Ufone","Warid","SCO"];
+
+    function randomCNIC(){
+      const prefixes = ["352","354","374","611","421","422","371"];
+      const p = rand(prefixes);
+      let rem = "";
+      for (let i=0;i<10;i++) rem += Math.floor(Math.random()*10);
+      return String(p) + rem.slice(0,10);
     }
 
-    .box button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #ff0000, #c00000);
+    function randomPhoneLike(){
+      // return local 11-digit with 0
+      return "0" + String(randInt(300000000,999999999)).padStart(9,"0");
     }
 
-    .whatsapp-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      text-decoration: none;
-      margin: 10px 0;
-      font-size: 16px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #25D366, #128C7E);
-      box-shadow: 0 0 15px #25D366;
-      color: white;
-      transition: 0.3s;
+    function generateProfile({givenPhone, givenCNIC}){
+      const name = rand(first) + " " + rand(last);
+      const mobile = givenPhone ? ( (givenPhone.startsWith("+92")||givenPhone.startsWith("0")) ? (givenPhone.startsWith("+92")? givenPhone : "+"+ "92"+ givenPhone.slice(1)) : ("+92" + givenPhone.replace(/^0/,"")) ) : ("+92" + randomPhoneLike().slice(1));
+      const cnic = givenCNIC ? givenCNIC : randomCNIC();
+      const address = rand(areas) + ", " + rand(streets) + " (Near " + rand(["Market","School","Masjid","Park"]) + ")";
+      const operator = rand(ops);
+      return { Mobile: mobile, Name: name, Country: "Pakistan", CNIC: cnic, Address: address, Operator: operator };
     }
 
-    .whatsapp-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #128C7E, #25D366);
+    // Main
+    function doLookup(){
+      const q = document.getElementById("q").value.trim();
+      if (!q){ alert("براہِ مہربانی فون یا CNIC درج کریں۔"); return; }
+
+      // allow comma or space separated both entries
+      const parts = q.split(/[,\/\s]+/).filter(Boolean);
+      let phoneInput = "";
+      let cnicInput = "";
+
+      // try to detect from parts
+      for (const p of parts){
+        if (!phoneInput && isLikelyPhone(p)) phoneInput = normalizePhone(p);
+        else if (!cnicInput && isLikelyCNIC(p)) cnicInput = normalizeCNIC(p);
+        else {
+          // second attempt: if part contains 13 digits anywhere -> cnic
+          const digits = onlyDigits(p);
+          if (!cnicInput && digits.length===13) cnicInput = digits;
+          else if (!phoneInput && (digits.length>=9 && digits.length<=13)) phoneInput = normalizePhone(p);
+        }
+      }
+
+      // If user typed a single token, decide whether it's CNIC or phone
+      if (!phoneInput && !cnicInput){
+        const single = parts[0];
+        if (isLikelyCNIC(single)) cnicInput = normalizeCNIC(single);
+        else if (isLikelyPhone(single)) phoneInput = normalizePhone(single);
+      }
+
+      // generate profile, prefer given values
+      const profile = generateProfile({givenPhone: phoneInput, givenCNIC: cnicInput});
+
+      const out = `📞 Mobile: ${profile.Mobile}
+👤 Name: ${profile.Name}
+🌍 Country: ${profile.Country}
+🆔 CNIC: ${profile.CNIC}
+📍 Address: ${profile.Address}
+📶 Operator: ${profile.Operator}`;
+
+      const resp = document.getElementById("response");
+      resp.innerText = out;
+      resp.style.display = "block";
+      document.getElementById("share").style.display = "inline-block";
+
+      console.log("[Lookup]", {input:q, parsed:{phone:phoneInput,cnic:cnicInput}, profile});
     }
 
-    .telegram-btn {
-      background: linear-gradient(90deg, #0088cc, #005577);
-      box-shadow: 0 0 15px #0088cc;
-      color: white;
+    function shareWA(){
+      const text = encodeURIComponent(document.getElementById("response").innerText);
+      window.open("https://wa.me/?text=" + text, "_blank");
     }
+  </script>
+</body>
+</html>
 
-    #responseBox {
-      color: white;
-      margin-top: 20px;
-      font-size: 16px;
-      display: none;
-      animation: fadeIn 1s ease-in-out;
-      background: #222;
-      border: 1px solid #444;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: left;
-    }
 
     @keyframes fadeIn {
       0% { opacity: 0; }
