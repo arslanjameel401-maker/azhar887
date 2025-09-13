@@ -1,239 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AzharBaba DB</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AzharBaba — Final Lookup</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      animation: fadeIn 1s ease-in-out;
+    :root{ --bg:#000; --card:#111; --accent:#c00000; --wa:#25D366; }
+    body{margin:0;padding:0;background:var(--bg);color:#fff;font-family:Arial, sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .wrap{width:100%;max-width:880px;padding:16px}
+    .card{background:var(--card);border:2px solid var(--accent);padding:20px;border-radius:12px;box-shadow:0 0 28px rgba(192,0,0,0.12)}
+    h1{color:#ff6b6b;margin:0 0 12px;font-size:20px}
+    input[type="text"], input[type="password"], input[type="search"]{
+      width:100%;padding:11px;border-radius:8px;border:none;margin:8px 0;background:#222;color:#fff;font-size:15px;
     }
-
-    .login-box, .box {
-      background: #111;
-      border: 2px solid red;
-      box-shadow: 0 0 25px red;
-      padding: 30px 20px;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    h2 {
-      color: red;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 20px;
-      font-size: 16px;
-      background: #333;
-      color: white;
-      box-shadow: inset 0 0 5px red;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      margin: 10px 0;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      color: white;
-      background: linear-gradient(90deg, #c00000, #ff0000);
-      box-shadow: 0 0 15px red;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #ff0000, #c00000);
-    }
-
-    .whatsapp-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      text-decoration: none;
-      margin: 10px 0;
-      font-size: 16px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #25D366, #128C7E);
-      box-shadow: 0 0 15px #25D366;
-      color: white;
-      transition: 0.3s;
-    }
-
-    .whatsapp-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #128C7E, #25D366);
-    }
-
-    #responseBox {
-      color: white;
-      margin-top: 20px;
-      font-size: 16px;
-      display: none;
-      animation: fadeIn 1s ease-in-out;
-      background: #222;
-      border: 1px solid #444;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: left;
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
+    button.primary{width:100%;padding:11px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent),#ff0000);color:#fff;font-weight:700;cursor:pointer}
+    .row{display:flex;gap:10px}
+    .btn-small{padding:9px 12px;border-radius:8px;border:none;background:#444;color:#fff;cursor:pointer}
+    #response{display:none;margin-top:12px;text-align:left;background:#171717;padding:12px;border-radius:8px;white-space:pre-wrap}
+    .controls{display:flex;gap:10px;margin-top:12px;align-items:center}
+    .wa-link{display:inline-flex;gap:8px;align-items:center;padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--wa),#128C7E);color:#fff;font-weight:700;text-decoration:none}
+    .wa-icon{width:18px;height:18px;display:inline-block}
+    .note{font-size:13px;color:#bbb;margin-top:10px}
+    .error{color:#ffb3b3;background:#330000;padding:8px;border-radius:6px;margin-top:8px;display:none}
+    .hidden{display:none !important}
   </style>
 </head>
 <body>
-  <!-- Login Page -->
-  <div class="login-box" id="loginBox">
-    <h2>🔐 Login</h2>
-    <input type="text" id="username" placeholder="Username" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button onclick="login()">Login</button>
-    <p id="loginError" style="color:red; display:none;">❌ Invalid credentials</p>
-  </div>
+  <div class="wrap">
+    <!-- LOGIN -->
+    <div id="loginCard" class="card">
+      <h1>🔐 Login — AzharBaba</h1>
+      <input id="username" type="text" placeholder="User name" />
+      <input id="password" type="password" placeholder="Password" />
+      <button class="primary" onclick="doLogin()">Login</button>
+      <div id="loginError" class="error">یوزر یا پاس ورڈ غلط ہیں۔</div>
+      <p class="note">Demo credentials: <strong>User:</strong> Azhar887 &nbsp; <strong>Pass:</strong> baba887</p>
+    </div>
 
-  <!-- Main App -->
-  <div class="box" id="mainBox" style="display:none;">
-    <h2>🔍 AzharBaba DB</h2>
-    <input type="text" id="number" placeholder="Enter phone number or CNIC" required />
-    <button onclick="doLookup()">🔎 Get Details</button>
+    <!-- APP -->
+    <div id="appCard" class="card hidden" style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h1>🔎 AzharBaba — Exact + Random Lookup</h1>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn-small" onclick="doLogout()">Logout</button>
+        </div>
+      </div>
 
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/923064457887" target="_blank" class="whatsapp-btn">
-      <span>📱</span> Contact on WhatsApp
-    </a>
+      <input id="q" placeholder="Phone or CNIC or 'AzharBaba DB' — eg: 03064457887 or +923220409615 or 3540275672161" />
+      <div class="row" style="margin-top:6px">
+        <button class="primary" style="flex:1" onclick="doLookup()">🔎 Search</button>
+        <button class="btn-small" onclick="fillAzhar()">AzharBaba DB</button>
+      </div>
 
-    <div id="responseBox"></div>
+      <div id="response"></div>
+
+      <div class="controls">
+        <!-- WhatsApp link to your provided number -->
+        <a id="waDirect" class="wa-link" href="https://wa.me/923064457887" target="_blank" title="Contact on WhatsApp (direct)">
+          <!-- simple WhatsApp SVG -->
+          <svg class="wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#fff" d="M20.52 3.48A11.88 11.88 0 0012 .12C5.42.12-.1 5.64-.1 12.22c0 2.12.56 4.18 1.62 6.01L.12 24l6.01-1.55A11.96 11.96 0 0012 24.12c6.58 0 12.1-5.52 12.1-12.2 0-3.26-1.26-6.25-3.58-8.44z"/>
+          </svg>
+          Contact: +923064457887
+        </a>
+
+        <!-- Share current result to WhatsApp (opens wa.me with text) -->
+        <button id="shareBtn" class="btn-small" onclick="shareResult()">Share result on WhatsApp</button>
+
+        <!-- Copy -->
+        <button class="btn-small" onclick="copyResult()">Copy</button>
+      </div>
+
+      <p class="note">نوٹ: جو ریکارڈ آپ نے فراہم کیے وہی اصل (exact) دکھیں گے؛ باقی سب فرضی/ٹیسٹ ہوں گے۔</p>
+    </div>
   </div>
 
   <script>
-    // ---- Login System ----
-    function login() {
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-      const error = document.getElementById("loginError");
-
-      if (user === "Azhar887" && pass === "baba887") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("mainBox").style.display = "block";
-      } else {
-        error.style.display = "block";
-      }
-    }
-
-    // ---- Exact Records ----
-    const exactRecords = {
-      "+9203097835621": { Mobile:"+9203097835621", Name:"Salman bhai", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Jazz" },
-      "+923097835621": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz" },
-      "3540270645781": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz" },
-      "+923014939926": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor" },
-      "3550101255967": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor" },
-      "+9203178267887": { Mobile:"+9203178267887", Name:"Azhar bhai 887", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Zong" },
-      "+923011684521": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone" },
-      "3540219962447": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone" },
-      "+923220409615": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid" },
-      "3550106959055": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid" }
-    };
-
-    // ---- Fake Data Generator ----
-    const fakeNames = ["Ali Raza", "Hamza Khan", "Bilal Ahmed", "Usman Tariq", "Ahsan Malik"];
-    const fakeAddresses = ["Lahore Cantt", "Karachi Saddar", "Rawalpindi", "Islamabad F-10", "Multan Bypass"];
-    const fakeCNICs = ["35201-1234567-1", "61101-7654321-0", "37405-9876543-2", "42101-5555555-5", "61101-3333333-7"];
-    const fakeOperators = ["Jazz", "Telenor", "Zong", "Ufone", "Warid"];
-
-    function doLookup() {
-      const raw = document.getElementById("number").value.trim();
-      const responseBox = document.getElementById("responseBox");
-
-      if (!raw) {
-        alert("Please enter a phone number or CNIC");
-        return;
-      }
-
-      if (exactRecords[raw]) {
-        const p = exactRecords[raw];
-        responseBox.innerText = `📞 Mobile: ${p.Mobile}\n👤 Name: ${p.Name}\n🌍 Country: ${p.Country}\n🆔 CNIC: ${p.CNIC || "N/A"}\n📍 Address: ${p.Address}\n📶 Operator: ${p.Operator}`;
-      } else {
-        const random = {
-          Mobile: "+92" + Math.floor(3000000000 + Math.random() * 99999999),
-          Name: fakeNames[Math.floor(Math.random() * fakeNames.length)],
-          Country: "Pakistan",
-          CNIC: fakeCNICs[Math.floor(Math.random() * fakeCNICs.length)],
-          Address: fakeAddresses[Math.floor(Math.random() * fakeAddresses.length)],
-          Operator: fakeOperators[Math.floor(Math.random() * fakeOperators.length)]
-        };
-        responseBox.innerText = `📞 Mobile: ${random.Mobile}\n👤 Name: ${random.Name}\n🌍 Country: ${random.Country}\n🆔 CNIC: ${random.CNIC}\n📍 Address: ${random.Address}\n📶 Operator: ${random.Operator}`;
-      }
-
-      responseBox.style.display = "block";
-    }
- <script>
     // -----------------------------
-    // Utility / Normalization
+    // Auth (local/dummy)
+    // -----------------------------
+    const AUTH_USER = "Azhar887";
+    const AUTH_PASS = "baba887";
+    const SKEY = "azharbaba_session_v1";
+
+    function showLogin(){ document.getElementById("loginCard").classList.remove("hidden"); document.getElementById("appCard").classList.add("hidden"); }
+    function showApp(){ document.getElementById("loginCard").classList.add("hidden"); document.getElementById("appCard").classList.remove("hidden"); }
+
+    function doLogin(){
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value;
+      const err = document.getElementById("loginError");
+      err.style.display = "none";
+      if(u === AUTH_USER && p === AUTH_PASS){
+        sessionStorage.setItem(SKEY, "1");
+        showApp();
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+      } else {
+        err.style.display = "block";
+      }
+    }
+
+    function doLogout(){
+      sessionStorage.removeItem(SKEY);
+      showLogin();
+    }
+
+    (function initAuth(){
+      if(sessionStorage.getItem(SKEY) === "1") showApp(); else showLogin();
+    })();
+
+    // -----------------------------
+    // Helpers / normalization
     // -----------------------------
     function onlyDigits(s){ return (s||"").toString().replace(/\D/g,""); }
+    function isLikelyCNIC(s){ return onlyDigits(String(s)).length === 13; }
+    function isLikelyPhone(s){ const d = onlyDigits(String(s)); return (d.length >=9 && d.length <=13); }
 
-    // Normalize input into candidate key variants to check exactRecords.
     function phoneVariants(input){
       const out = new Set();
       if(!input) return Array.from(out);
       let s = input.toString().trim();
-      // strip spaces and non-digits except +
-      const digits = onlyDigits(s);
-      // forms we will produce: raw (if starts with +), +92... , 0XXXXXXXXXX , digits-only last 10/11, with and without +
-      if(s.startsWith('+')) {
-        out.add(s); // e.g. +923220409615 or +920309...
-        const d = onlyDigits(s);
-        if(d.startsWith("92") && d.length>=12) out.add("0"+d.slice(2)); // +92322... -> 0322...
-        out.add(d); // digits only
-      } else {
-        const d = digits;
+      const d = onlyDigits(s);
+      if(s.startsWith('+')){
+        out.add(s);
         out.add(d);
-        if(d.length===11 && d.startsWith("0")) {
-          out.add(d); // 0306...
-          out.add("+" + "92" + d.slice(1)); // +92306...
-        } else if(d.length===10) {
-          // maybe missing leading zero
-          out.add("0"+d); // 0XXXXXXXXX
-          out.add("+" + "92" + d.slice(1)); // +92XXXXXXXXX
-        } else if(d.length===12 && d.startsWith("92")) {
+        if(d.startsWith("92") && d.length>=12) out.add("0"+d.slice(2));
+      } else {
+        out.add(d);
+        if(d.length===11 && d.startsWith("0")){
+          out.add(d);
+          out.add("+" + "92" + d.slice(1));
+        } else if(d.length===10){
+          out.add("0"+d);
+          out.add("+" + "92" + d.slice(1));
+        } else if(d.length===12 && d.startsWith("92")){
           out.add("0"+d.slice(2));
           out.add("+"+d);
-        } else if(d.length>0) {
-          // generic additions
+        } else {
           if(d.length>11 && d.startsWith("92")) out.add("0"+d.slice(2));
           if(d.length===9) out.add("0"+d);
           if(d.length>=10) out.add("+" + ("92"+ d.slice(d.length-10)));
         }
       }
-      // also push lowercase trimmed original
       out.add(s.toLowerCase());
       return Array.from(out);
     }
@@ -242,20 +151,17 @@
       const d = onlyDigits(String(s));
       if(d.length===13) return d;
       if(d.length>13) return d.slice(-13);
-      // pad or return as-is (exact matches should be provided in full)
       return d.padStart(13,"0").slice(0,13);
     }
 
-    function isLikelyCNIC(s){ return onlyDigits(String(s)).length===13; }
-    function isLikelyPhone(s){ const d = onlyDigits(String(s)); return (d.length>=9 && d.length<=13); }
-
     // -----------------------------
-    // Exact records (your provided original data)
-    // Keys: common variants (we'll include both +92... and 0... and CNIC keys where present)
+    // exactRecords: ALL your provided originals (complete)
     // -----------------------------
     const exactRecords = {
-      // No. 1: Salman bhai (note: you also sent MUHAMMAD JAVED in same section; both added)
+      // No. 1: Salman bhai
       "+9203097835621": { Mobile:"+9203097835621", Name:"Salman bhai", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Jazz", source:"exact" },
+
+      // No. 1: MUHAMMAD JAVED
       "+923097835621": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz", source:"exact" },
       "3540270645781": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz", source:"exact" },
 
@@ -274,40 +180,38 @@
       "+923220409615": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
       "3550106959055": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
 
-      // AzharBaba alias -> map to one of exacts (optional)
+      // AzharBaba alias (existing M LATIF record you used)
       "azharbaba db": { Mobile:"+923064457887", Name:"M LATIF", Country:"Pakistan", CNIC:"3540275672161", Address:"CHACHKAY GAL PO MANDI FAIZ ABAD", Operator:"Jazz", source:"exact" }
     };
 
-    // Also add common normalized variants for exactRecords (0-prefix and +92) for easier matching:
+    // Expand variants for easier matching (0-prefix, +92, bare digits)
     (function expandVariants(){
       const keys = Object.keys(exactRecords);
       for(const k of keys){
-        // skip aliases like 'azharbaba db' (not numeric)
         if(/\d/.test(k)){
           const d = onlyDigits(k);
-          // if key starts with 92 and length 12 -> create 0 prefix
           if(d.length>=11){
-            // if key like +923220409615 -> create 03220409615 variant
+            // +92... -> 0...
             if(d.startsWith("92") && d.length>=12){
               const zero = "0"+d.slice(2);
-              exactRecords[zero] = exactRecords[zero] || exactRecords[k];
+              if(!exactRecords[zero]) exactRecords[zero] = exactRecords[k];
             }
-            // if key starts with 0 and length 11 -> create +92 variant
+            // 0XXXXXXXXXX -> +92...
             if(d.startsWith("0") && d.length===11){
               const plus = "+" + "92" + d.slice(1);
-              exactRecords[plus] = exactRecords[plus] || exactRecords[k];
-              exactRecords[d] = exactRecords[d] || exactRecords[k];
-              exactRecords[d.replace(/^0/,"")] = exactRecords[d.replace(/^0/,"")] || exactRecords[k];
+              if(!exactRecords[plus]) exactRecords[plus] = exactRecords[k];
+              if(!exactRecords[d]) exactRecords[d] = exactRecords[k];
+              if(!exactRecords[d.replace(/^0/,"")]) exactRecords[d.replace(/^0/,"")] = exactRecords[k];
             }
-            // also add bare digits key
-            exactRecords[d] = exactRecords[d] || exactRecords[k];
+            // also add plain digits
+            if(!exactRecords[d]) exactRecords[d] = exactRecords[k];
           }
         }
       }
     })();
 
     // -----------------------------
-    // Random profile generator (for non-exact)
+    // Random (fake) profile generator
     // -----------------------------
     function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
     function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
@@ -338,7 +242,7 @@
     }
 
     // -----------------------------
-    // Main lookup logic
+    // Main lookup flow
     // -----------------------------
     function doLookup(){
       const raw = document.getElementById("q").value.trim();
@@ -346,14 +250,10 @@
 
       const low = raw.toLowerCase().trim();
 
-      // 1) Direct alias/word match (like "azharbaba db")
-      if(exactRecords[low]) {
-        showResponse(formatRecord(exactRecords[low]));
-        console.log("[exact alias match]", raw, exactRecords[low]);
-        return;
-      }
+      // alias exact (e.g. "azharbaba db")
+      if(exactRecords[low]){ showRecord(exactRecords[low]); console.log("[exact alias]", low); return; }
 
-      // 2) try parse tokens (phone, cnic, or both)
+      // tokenize input
       const parts = raw.split(/[,\/\s]+/).filter(Boolean);
       let phoneInput = "";
       let cnicInput = "";
@@ -368,7 +268,7 @@
         }
       }
 
-      // if single token and not clearly both, decide
+      // single token guess
       if(!phoneInput && !cnicInput){
         const single = parts[0];
         if(single){
@@ -377,49 +277,30 @@
         }
       }
 
-      // 3) Check exactRecords by generating candidate phone keys
+      // check phone variants for exact match
       if(phoneInput){
         const variants = phoneVariants(phoneInput);
         for(const v of variants){
-          if(exactRecords[v]) {
-            showResponse(formatRecord(exactRecords[v]));
-            console.log("[exact phone match]", phoneInput, exactRecords[v]);
-            return;
-          }
+          if(exactRecords[v]){ showRecord(exactRecords[v]); console.log("[exact phone]", v); return; }
         }
       }
 
-      // 4) Check exactRecords by CNIC
+      // check CNIC exact
       if(cnicInput){
         const normC = normalizeCNICKey(cnicInput);
-        if(exactRecords[normC]) {
-          showResponse(formatRecord(exactRecords[normC]));
-          console.log("[exact cnic match]", cnicInput, exactRecords[normC]);
-          return;
-        }
+        if(exactRecords[normC]){ showRecord(exactRecords[normC]); console.log("[exact cnic]", normC); return; }
       }
 
-      // 5) As last attempt, check raw token as-is (digits only)
+      // check raw digits
       const rawDigits = onlyDigits(raw);
-      if(rawDigits && exactRecords[rawDigits]) {
-        showResponse(formatRecord(exactRecords[rawDigits]));
-        console.log("[exact rawDigits match]", rawDigits, exactRecords[rawDigits]);
-        return;
-      }
+      if(rawDigits && exactRecords[rawDigits]){ showRecord(exactRecords[rawDigits]); console.log("[exact rawdigits]", rawDigits); return; }
 
-      // 6) Not exact -> generate random/fake profile (preferred values used if provided)
+      // not found -> random
       const preferredPhone = phoneInput ? (phoneVariants(phoneInput)[0] || phoneInput) : "";
       const preferredCNIC = cnicInput ? normalizeCNICKey(cnicInput) : "";
-      const randProfile = generateRandomProfile(preferredPhone, preferredCNIC);
-      showResponse(formatRecord(randProfile));
-      console.log("[random profile]", {input:raw, parsed:{phone:phoneInput,cnic:cnicInput}, profile:randProfile});
-    }
-
-    function normalizeCNICKey(s){
-      const d = onlyDigits(String(s));
-      if(d.length===13) return d;
-      if(d.length>13) return d.slice(-13);
-      return d.padStart(13,"0").slice(0,13);
+      const rp = generateRandomProfile(preferredPhone, preferredCNIC);
+      showRecord(rp);
+      console.log("[random]", rp);
     }
 
     function formatRecord(r){
@@ -429,17 +310,32 @@
 🆔 CNIC: ${r.CNIC || "N/A"}
 📍 Address: ${r.Address}
 📶 Operator: ${r.Operator}
-\n[Type: ${r.source || "unknown"}]`;
+
+[Type: ${r.source || "unknown"}]`;
     }
 
-    function showResponse(text){
+    function showRecord(r){
       const resp = document.getElementById("response");
-      resp.innerText = text;
+      resp.innerText = formatRecord(r);
       resp.style.display = "block";
-      document.getElementById("share").style.display = "inline-block";
     }
 
-    function shareWA(){ const text = encodeURIComponent(document.getElementById("response").innerText); window.open("https://wa.me/?text=" + text, "_blank"); }
+    function fillAzhar(){ document.getElementById("q").value = "AzharBaba DB"; }
+
+    // share result to WhatsApp (opens wa.me with message text)
+    function shareResult(){
+      const resp = document.getElementById("response");
+      if(!resp.innerText){ alert("پہلے کوئی رزلٹ دکھائیں، پھر شیئر کریں۔"); return; }
+      const text = encodeURIComponent(resp.innerText);
+      const url = `https://wa.me/?text=${text}`;
+      window.open(url, "_blank");
+    }
+
+    function copyResult(){
+      const resp = document.getElementById("response");
+      if(!resp.innerText){ alert("پہلے کوئی رزلٹ دکھائیں، پھر کاپی کریں۔"); return; }
+      navigator.clipboard.writeText(resp.innerText).then(()=> alert("Result copied to clipboard."), ()=> alert("Copy failed."));
+    }
   </script>
 </body>
 </html>
