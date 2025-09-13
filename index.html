@@ -127,7 +127,32 @@
   </div>
 
   <script>
-  let notFoundCount = 0; // counter banaya
+  let notFoundCount = 0; 
+
+  // === Manual Data (local database) ===
+  const localDB = {
+    "3064457887": {
+      Mobile: "+923064457887",
+      Name: "M LATIF",
+      Country: "Pakistan",
+      CNIC: "3540275672161",
+      Address: "CHACHKAY GAL PO MANDI FAIZ ABAD"
+    },
+    "03064457887": {
+      Mobile: "+923064457887",
+      Name: "M LATIF",
+      Country: "Pakistan",
+      CNIC: "3540275672161",
+      Address: "CHACHKAY GAL PO MANDI FAIZ ABAD"
+    },
+    "+923064457887": {
+      Mobile: "+923064457887",
+      Name: "M LATIF",
+      Country: "Pakistan",
+      CNIC: "3540275672161",
+      Address: "CHACHKAY GAL PO MANDI FAIZ ABAD"
+    }
+  };
 
   async function fetchData() {
     const number = document.getElementById("number").value.trim();
@@ -139,6 +164,24 @@
       return;
     }
 
+    // === Local DB Check ===
+    if (localDB[number]) {
+      const user = localDB[number];
+      const content = `
+📞 Mobile: ${user.Mobile}
+👤 Name: ${user.Name}
+🌍 Country: ${user.Country}
+🆔 CNIC: ${user.CNIC}
+📍 Address: ${user.Address}
+      `;
+      responseBox.innerText = content;
+      responseBox.style.display = "block";
+      shareButton.style.display = "inline-block";
+      console.log(`Local data shown for number: ${number}`);
+      return; // API call skip
+    }
+
+    // === Agar local DB me na ho to API call karo ===
     const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://amscriptapi.vercel.app/AhmadMods/Num=${number}`)}`;
 
     try {
@@ -149,32 +192,22 @@
       if (apiData.status === "success" && Array.isArray(apiData.data) && apiData.data.length > 0) {
         const user = apiData.data[0];
         const content = `
-📞 Mobile: ${user.Mobile || "+923064457887"}
-👤 Name: ${user.Name || "M LATIF"}
-🌍 Country: ${user.Country || "Pakistan"}
-🆔 CNIC: ${user.CNIC || "3540275672161"}
-📍 Address: ${user.Address || "CHACHKAY GAL PO MANDI FAIZ ABAD"}
-📶 Operator: ${user.Operator || "Jazz"}
+📞 Mobile: ${user.Mobile || "N/A"}
+👤 Name: ${user.Name || "N/A"}
+🌍 Country: ${user.Country || "N/A"}
+🆔 CNIC: ${user.CNIC || "N/A"}
+📍 Address: ${user.Address || "N/A"}
+📶 Operator: ${user.Operator || "N/A"}
         `;
         responseBox.innerText = content;
         responseBox.style.display = "block";
         shareButton.style.display = "inline-block";
       } else {
-        // === Tracking + Default Data ===
         notFoundCount++;
         console.log(`Data Not Found for number: ${number} | Count: ${notFoundCount}`);
-
-        const fallback = `
-📞 Mobile: +923064457887
-👤 Name: M LATIF
-🌍 Country: Pakistan
-🆔 CNIC: 3540275672161
-📍 Address: CHACHKAY GAL PO MANDI FAIZ ABAD
-        `;
-
-        responseBox.innerText = fallback;
+        responseBox.innerHTML = `<p style="color: yellow; font-size: 18px; font-weight: bold;">Data Not Found</p>`;
         responseBox.style.display = "block";
-        shareButton.style.display = "inline-block";
+        shareButton.style.display = "none";
       }
     } catch (e) {
       responseBox.innerHTML = `<p style="color: red; font-size: 18px; font-weight: bold;">Error fetching data. Please try again later.</p>`;
