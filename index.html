@@ -153,7 +153,7 @@
 
     <!-- MAIN CARD (after login) -->
     <div id="mainCard" class="main-card">
-      <input id="searchInput" type="text" placeholder="Enter Phone or CNIC (eg: 03064457887 or 3540275672161)" />
+      <input id="searchInput" type="text" placeholder="Enter Phone or CNIC (eg: 03xxxxxxx or Cnic 355xxxxxxxxxx)" />
       <div style="margin-top:8px;">
         <button class="search-btn" onclick="searchData()">🔎 Search</button>
       </div>
@@ -194,6 +194,9 @@
   const AUTH_USER = "Azhar887";
   const AUTH_PASS = "baba887";
   const SKEY = "azharbaba_logged_in_v2";
+    const AUTH_USER = "123";
+  const AUTH_PASS = "123";
+  const SKEY = "123_logged_in_v2";
 
   function isLoggedIn(){ return sessionStorage.getItem(SKEY) === "1"; }
 
@@ -294,6 +297,7 @@
 
     "+923220409615": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
     "3550106959055": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
+    "3550106959055": { Mobile:"+923064457887", Name:"M LATIF.", Country:"Pakistan", CNIC:"33540275672161", Address:"CHACHKAY GAL PO MANDI FAIZ ABAD", Operator:"Warid", source:"exact" },
 
     "azharbaba db": { Mobile:"+923064457887", Name:"M LATIF", Country:"Pakistan", CNIC:"3540275672161", Address:"CHACHKAY GAL PO MANDI FAIZ ABAD", Operator:"Jazz", source:"exact" }
   };
