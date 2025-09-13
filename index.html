@@ -11,11 +11,68 @@
       font-family: Arial, sans-serif;
       text-align: center;
     }
-    h1 {
-      margin: 20px 0;
+    .top-title {
+      margin: 22px 0 8px;
       font-size: 28px;
       color: #ff4444;
     }
+    .center-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 12px;
+      padding: 10px;
+    }
+
+    /* Login Card */
+    .login-card {
+      background: #111;
+      border: 2px solid #c00000;
+      box-shadow: 0 0 25px rgba(192,0,0,0.12);
+      padding: 26px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .login-card h2 { color: #ff6b6b; margin: 0 0 12px; }
+    .login-card input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin: 8px 0;
+      font-size: 15px;
+      background: #222;
+      color: #fff;
+    }
+    .login-card button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(90deg,#c00000,#ff0000);
+      color: #fff;
+      font-weight:700;
+      cursor:pointer;
+      margin-top:6px;
+    }
+    .login-error { color:#ffb3b3; background:#330000; padding:8px; border-radius:6px; margin-top:8px; display:none; }
+
+    /* Main UI (after login) */
+    .main-card {
+      display:none;
+      background: #111;
+      border: 2px solid #c00000;
+      box-shadow: 0 0 25px rgba(192,0,0,0.12);
+      padding: 22px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 760px;
+      text-align: center;
+    }
+
     input[type="text"] {
       width: 90%;
       max-width: 500px;
@@ -26,121 +83,362 @@
       background: #222;
       color: #fff;
     }
-    button {
+    .search-btn {
       margin-top: 10px;
       padding: 12px 20px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-size: 16px;
-    }
-    .search-btn {
       background: linear-gradient(90deg,#c00000,#ff0000);
-      color: #fff;
+      color:#fff;
+      font-weight:700;
     }
     .wa-btn {
+      margin-top: 12px;
       background: linear-gradient(90deg,#25D366,#128C7E);
       color: #fff;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 15px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight:700;
+      box-shadow: 0 6px 18px rgba(37,211,102,0.12);
+      border: none;
     }
-    .wa-btn svg {
-      width: 18px; height: 18px;
-    }
+    .wa-btn svg { width:18px; height:18px; }
+
+    /* Result card (beautiful) */
     #result {
       display: none;
-      margin: 20px auto;
-      max-width: 600px;
-      background: #111;
-      border: 2px solid #c00000;
-      border-radius: 10px;
-      padding: 20px;
+      margin: 20px auto 0;
+      max-width: 650px;
+      background: #0f0f10;
+      border: 2px solid #222;
+      box-shadow: 0 0 18px rgba(0,0,0,0.6);
+      padding: 18px;
+      border-radius: 12px;
       text-align: left;
     }
-    #result h2 {
-      margin-top: 0;
-      color: #ff6b6b;
+    #result .header {
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+      border-bottom:1px solid rgba(255,255,255,0.04); padding-bottom:10px; margin-bottom:10px;
     }
-    #result p {
-      margin: 8px 0;
-      font-size: 15px;
-    }
+    #result h2 { margin:0; color:#ff6b6b; }
+    #result .meta { color:#bbb; font-size:13px; }
+    #result p { margin:8px 0; font-size:15px; color:#e6e6e6; }
+    #result .field { font-weight:700; color:#fff; }
+    .controls { display:flex; gap:10px; margin-top:10px; }
+    .btn-small { padding:10px 12px; border-radius:8px; border:none; background:#333; color:#fff; cursor:pointer; }
+
+    .note { font-size:13px; color:#bbb; margin-top:10px; }
   </style>
 </head>
 <body>
 
-  <h1>📡 AzharBaba DB</h1>
+  <div class="center-wrap">
+    <div class="top-title">📡 AzharBaba DB</div>
 
-  <input id="searchInput" type="text" placeholder="Enter Phone or CNIC..." />
-  <br>
-  <button class="search-btn" onclick="searchData()">🔎 Search</button>
-  <br>
-  <a class="wa-btn" href="https://wa.me/923064457887" target="_blank">
-    <svg viewBox="0 0 24 24"><path fill="#fff" d="M20.52 3.48A11.88 11.88 0 0012 .12C5.42.12-.1 5.64-.1 12.22c0 2.12.56 4.18 1.62 6.01L.12 24l6.01-1.55A11.96 11.96 0 0012 24.12c6.58 0 12.1-5.52 12.1-12.2 0-3.26-1.26-6.25-3.58-8.44z"/></svg>
-    WhatsApp
-  </a>
+    <!-- LOGIN CARD -->
+    <div id="loginCard" class="login-card" aria-live="polite">
+      <h2>🔐 Login</h2>
+      <input id="loginUser" type="text" placeholder="Username" autocomplete="off" />
+      <input id="loginPass" type="password" placeholder="Password" />
+      <button onclick="handleLogin()">Login</button>
+      <div id="loginErr" class="login-error">یوزر یا پاس ورڈ غلط ہیں۔</div>
+      <p class="note">Demo credentials: <strong>User:</strong> Azhar887 &nbsp; <strong>Pass:</strong> baba887</p>
+    </div>
 
-  <div id="result">
-    <h2>📋 Search Result</h2>
-    <p><strong>Name:</strong> <span id="rName"></span></p>
-    <p><strong>Mobile:</strong> <span id="rMobile"></span></p>
-    <p><strong>Country:</strong> <span id="rCountry"></span></p>
-    <p><strong>CNIC:</strong> <span id="rCnic"></span></p>
-    <p><strong>Address:</strong> <span id="rAddress"></span></p>
-    <p><strong>Operator:</strong> <span id="rOperator"></span></p>
+    <!-- MAIN CARD (after login) -->
+    <div id="mainCard" class="main-card">
+      <input id="searchInput" type="text" placeholder="Enter Phone or CNIC (eg: 03064457887 or 3540275672161)" />
+      <div style="margin-top:8px;">
+        <button class="search-btn" onclick="searchData()">🔎 Search</button>
+      </div>
+
+      <!-- WhatsApp button below search -->
+      <a class="wa-btn" id="waDirect" href="https://wa.me/923064457887" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M20.52 3.48A11.88 11.88 0 0012 .12C5.42.12-.1 5.64-.1 12.22c0 2.12.56 4.18 1.62 6.01L.12 24l6.01-1.55A11.96 11.96 0 0012 24.12c6.58 0 12.1-5.52 12.1-12.2 0-3.26-1.26-6.25-3.58-8.44z"/></svg>
+        Contact: +923064457887
+      </a>
+
+      <!-- Result Card -->
+      <div id="result" role="region" aria-live="polite">
+        <div class="header">
+          <h2>📋 Search Result</h2>
+          <div class="meta" id="metaType">Type: N/A</div>
+        </div>
+
+        <p><span class="field">Name:</span> <span id="rName"></span></p>
+        <p><span class="field">Mobile:</span> <span id="rMobile"></span></p>
+        <p><span class="field">Country:</span> <span id="rCountry"></span></p>
+        <p><span class="field">CNIC:</span> <span id="rCnic"></span></p>
+        <p><span class="field">Address:</span> <span id="rAddress"></span></p>
+        <p><span class="field">Operator:</span> <span id="rOperator"></span></p>
+
+        <div class="controls">
+          <button class="btn-small" onclick="shareResult()">Share result on WhatsApp</button>
+          <button class="btn-small" onclick="copyResult()">Copy</button>
+          <button class="btn-small" onclick="logoutFromApp()">Logout</button>
+        </div>
+      </div>
+
+      <p class="note">نوٹ: جو ریکارڈ آپ نے فراہم کیے وہی اصل (exact) دکھیں گے؛ باقی تمام نمبر فرضی/ٹیسٹ ہیں۔</p>
+    </div>
   </div>
 
 <script>
-  // ✅ Exact records (آپ کا original data)
-  const exactRecords = {
-    "+9203097835621": {Name:"Salman bhai", Mobile:"+9203097835621", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Jazz"},
-    "+923097835621": {Name:"MUHAMMAD JAVED", Mobile:"+923097835621", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz"},
-    "3540270645781": {Name:"MUHAMMAD JAVED", Mobile:"+923097835621", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz"},
+  // ---------- AUTH ----------
+  const AUTH_USER = "Azhar887";
+  const AUTH_PASS = "baba887";
+  const SKEY = "azharbaba_logged_in_v2";
 
-    "+923014939926": {Name:"SHAHID .", Mobile:"+923014939926", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor"},
-    "3550101255967": {Name:"SHAHID .", Mobile:"+923014939926", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor"},
+  function isLoggedIn(){ return sessionStorage.getItem(SKEY) === "1"; }
 
-    "+9203178267887": {Name:"Azhar bhai 887", Mobile:"+9203178267887", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Zong"},
-
-    "+923011684521": {Name:"ALLAH DITTA .", Mobile:"+923011684521", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone"},
-    "3540219962447": {Name:"ALLAH DITTA .", Mobile:"+923011684521", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone"},
-
-    "+923220409615": {Name:"MAHAR SHAKEEL .", Mobile:"+923220409615", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid"},
-    "3550106959055": {Name:"MAHAR SHAKEEL .", Mobile:"+923220409615", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid"},
-
-    "azharbaba db": {Name:"M LATIF", Mobile:"+923064457887", Country:"Pakistan", CNIC:"3540275672161", Address:"CHACHKAY GAL PO MANDI FAIZ ABAD", Operator:"Jazz"}
-  };
-
-  // ✅ Fake data generator
-  const fakeNames = ["Ali Khan","Zain Malik","Hassan Raza","Sara Ahmed","Ayesha Fatima","Bilal Sheikh"];
-  const fakeAdd = ["Model Town, Lahore","Clifton Karachi","Gulberg Islamabad","Cantt Peshawar","Shadman Faisalabad"];
-  const fakeOps = ["Jazz","Telenor","Zong","Ufone"];
-
-  function generateFake(input){
-    return {
-      Name: fakeNames[Math.floor(Math.random()*fakeNames.length)],
-      Mobile: input,
-      Country: "Pakistan",
-      CNIC: "35" + Math.floor(Math.random()*100000000000),
-      Address: fakeAdd[Math.floor(Math.random()*fakeAdd.length)],
-      Operator: fakeOps[Math.floor(Math.random()*fakeOps.length)]
-    };
+  function handleLogin(){
+    const u = document.getElementById("loginUser").value.trim();
+    const p = document.getElementById("loginPass").value;
+    const err = document.getElementById("loginErr");
+    err.style.display = "none";
+    if(u === AUTH_USER && p === AUTH_PASS){
+      sessionStorage.setItem(SKEY, "1");
+      showMain();
+      // clear inputs
+      document.getElementById("loginUser").value = "";
+      document.getElementById("loginPass").value = "";
+    } else {
+      err.style.display = "block";
+    }
   }
 
-  // ✅ Search function
-  function searchData(){
-    const val = document.getElementById("searchInput").value.trim().toLowerCase();
-    let data = exactRecords[val] || generateFake(val);
+  function showMain(){
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("mainCard").style.display = "block";
+    document.getElementById("result").style.display = "none";
+  }
 
-    document.getElementById("rName").innerText = data.Name;
-    document.getElementById("rMobile").innerText = data.Mobile;
-    document.getElementById("rCountry").innerText = data.Country;
-    document.getElementById("rCnic").innerText = data.CNIC;
-    document.getElementById("rAddress").innerText = data.Address;
-    document.getElementById("rOperator").innerText = data.Operator;
+  function showLogin(){
+    document.getElementById("loginCard").style.display = "block";
+    document.getElementById("mainCard").style.display = "none";
+    document.getElementById("result").style.display = "none";
+  }
+
+  function logoutFromApp(){
+    sessionStorage.removeItem(SKEY);
+    showLogin();
+  }
+
+  // init
+  (function(){
+    if(isLoggedIn()) showMain(); else showLogin();
+  })();
+
+  // ---------- DATA ----------
+  function onlyDigits(s){ return (s||"").toString().replace(/\D/g,""); }
+  function isLikelyCNIC(s){ return onlyDigits(String(s)).length === 13; }
+  function isLikelyPhone(s){ const d = onlyDigits(String(s)); return (d.length >=9 && d.length <=13); }
+
+  function phoneVariants(input){
+    const out = new Set();
+    if(!input) return Array.from(out);
+    let s = input.toString().trim();
+    const d = onlyDigits(s);
+    if(s.startsWith('+')){
+      out.add(s);
+      out.add(d);
+      if(d.startsWith("92") && d.length>=12) out.add("0"+d.slice(2));
+    } else {
+      out.add(d);
+      if(d.length===11 && d.startsWith("0")){
+        out.add(d);
+        out.add("+" + "92" + d.slice(1));
+      } else if(d.length===10){
+        out.add("0"+d);
+        out.add("+" + "92" + d.slice(1));
+      } else if(d.length===12 && d.startsWith("92")){
+        out.add("0"+d.slice(2));
+        out.add("+"+d);
+      } else {
+        if(d.length>11 && d.startsWith("92")) out.add("0"+d.slice(2));
+        if(d.length===9) out.add("0"+d);
+        if(d.length>=10) out.add("+" + ("92"+ d.slice(d.length-10)));
+      }
+    }
+    out.add(s.toLowerCase());
+    return Array.from(out);
+  }
+
+  function normalizeCNICKey(s){
+    const d = onlyDigits(String(s));
+    if(d.length===13) return d;
+    if(d.length>13) return d.slice(-13);
+    return d.padStart(13,"0").slice(0,13);
+  }
+
+  // ---------- Exact records (your provided originals) ----------
+  const exactRecords = {
+    "+9203097835621": { Mobile:"+9203097835621", Name:"Salman bhai", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Jazz", source:"exact" },
+
+    "+923097835621": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz", source:"exact" },
+    "3540270645781": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz", source:"exact" },
+
+    "+923014939926": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor", source:"exact" },
+    "3550101255967": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor", source:"exact" },
+
+    "+9203178267887": { Mobile:"+9203178267887", Name:"Azhar bhai 887", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Zong", source:"exact" },
+
+    "+923011684521": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone", source:"exact" },
+    "3540219962447": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone", source:"exact" },
+
+    "+923220409615": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
+    "3550106959055": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
+
+    "azharbaba db": { Mobile:"+923064457887", Name:"M LATIF", Country:"Pakistan", CNIC:"3540275672161", Address:"CHACHKAY GAL PO MANDI FAIZ ABAD", Operator:"Jazz", source:"exact" }
+  };
+
+  // expand variants for easier matching
+  (function expandVariants(){
+    const keys = Object.keys(exactRecords);
+    for(const k of keys){
+      if(/\d/.test(k)){
+        const d = onlyDigits(k);
+        if(d.length>=11){
+          if(d.startsWith("92") && d.length>=12){
+            const zero = "0"+d.slice(2);
+            if(!exactRecords[zero]) exactRecords[zero] = exactRecords[k];
+          }
+          if(d.startsWith("0") && d.length===11){
+            const plus = "+" + "92" + d.slice(1);
+            if(!exactRecords[plus]) exactRecords[plus] = exactRecords[k];
+            if(!exactRecords[d]) exactRecords[d] = exactRecords[k];
+            if(!exactRecords[d.replace(/^0/,"")]) exactRecords[d.replace(/^0/,"")] = exactRecords[k];
+          }
+          if(!exactRecords[d]) exactRecords[d] = exactRecords[k];
+        }
+      }
+    }
+  })();
+
+  // ---------- Random generators ----------
+  function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  const first = ["Ali","Ahmed","Hassan","Zain","Owais","Muhammad","Sana","Sara","Ayesha","Fatima","Bilal","Usman","Latif","Khalid","Imran"];
+  const last = ["Khan","Malik","Raza","Ali","Butt","Hussain","Sheikh","Qureshi","Nawaz","Bashir","Latif","Farooq"];
+  const areas = ["Model Town","Clifton","DHA","Cantt","Mandi Faizabad","Gulberg","Saddar","Nazimabad","Johar Town","Shadman","Garden"];
+  const streets = ["Block A","Sector 7","Street 5","Near Masjid","Opp Market","Main Bazar","Gal Po","New Town","Phase 2"];
+  const ops = ["Jazz","Telenor","Zong","Ufone","Warid","SCO"];
+
+  function randomCNIC(){
+    const prefixes = ["352","354","374","611","421","422","371"];
+    const p = rand(prefixes);
+    let rem = "";
+    for (let i=0;i<10;i++) rem += Math.floor(Math.random()*10);
+    return String(p) + rem.slice(0,10);
+  }
+  function randomPhoneLike(){
+    return "0" + String(randInt(300000000,999999999)).padStart(9,"0");
+  }
+  function generateRandomProfile(preferredPhone, preferredCNIC){
+    const name = rand(first) + " " + rand(last);
+    const mobile = preferredPhone ? ( (preferredPhone.startsWith("+92")||preferredPhone.startsWith("0")) ? (preferredPhone.startsWith("+92")? preferredPhone : "+"+ "92"+ preferredPhone.slice(1)) : ("+92" + preferredPhone.replace(/^0/,"")) ) : ("+92" + randomPhoneLike().slice(1));
+    const cnic = preferredCNIC ? preferredCNIC : randomCNIC();
+    const address = rand(areas) + ", " + rand(streets) + " (Near " + rand(["Market","School","Masjid","Park"]) + ")";
+    const operator = rand(ops);
+    return { Mobile: mobile, Name: name, Country: "Pakistan", CNIC: cnic, Address: address, Operator: operator, source: "random" };
+  }
+
+  // ---------- Main search ----------
+  function searchData(){
+    const raw = document.getElementById("searchInput").value.trim();
+    if(!raw){ alert("براہِ مہربانی نمبر یا CNIC درج کریں."); return; }
+    const low = raw.toLowerCase().trim();
+
+    // alias exact
+    if(exactRecords[low]){ displayRecord(exactRecords[low]); console.log("[exact alias]", low); return; }
+
+    // parse tokens
+    const parts = raw.split(/[,\/\s]+/).filter(Boolean);
+    let phoneInput = "";
+    let cnicInput = "";
+
+    for(const p of parts){
+      if(!phoneInput && isLikelyPhone(p)) phoneInput = p;
+      else if(!cnicInput && isLikelyCNIC(p)) cnicInput = normalizeCNICKey(p);
+      else {
+        const digits = onlyDigits(p);
+        if(!cnicInput && digits.length===13) cnicInput = digits;
+        else if(!phoneInput && (digits.length>=9 && digits.length<=13)) phoneInput = p;
+      }
+    }
+
+    if(!phoneInput && !cnicInput){
+      const single = parts[0];
+      if(single){
+        if(isLikelyCNIC(single)) cnicInput = normalizeCNICKey(single);
+        else if(isLikelyPhone(single)) phoneInput = single;
+      }
+    }
+
+    // check phone variants
+    if(phoneInput){
+      const variants = phoneVariants(phoneInput);
+      for(const v of variants){
+        if(exactRecords[v]){ displayRecord(exactRecords[v]); console.log("[exact phone]", v); return; }
+      }
+    }
+
+    // check CNIC
+    if(cnicInput){
+      const normC = normalizeCNICKey(cnicInput);
+      if(exactRecords[normC]){ displayRecord(exactRecords[normC]); console.log("[exact cnic]", normC); return; }
+    }
+
+    // raw digits
+    const rawDigits = onlyDigits(raw);
+    if(rawDigits && exactRecords[rawDigits]){ displayRecord(exactRecords[rawDigits]); console.log("[exact rawdigits]", rawDigits); return; }
+
+    // not found -> random
+    const preferredPhone = phoneInput ? (phoneVariants(phoneInput)[0] || phoneInput) : "";
+    const preferredCNIC = cnicInput ? normalizeCNICKey(cnicInput) : "";
+    const rp = generateRandomProfile(preferredPhone, preferredCNIC);
+    displayRecord(rp);
+    console.log("[random]", rp);
+  }
+
+  function normalizeCNICKey(s){
+    const d = onlyDigits(String(s));
+    if(d.length===13) return d;
+    if(d.length>13) return d.slice(-13);
+    return d.padStart(13,"0").slice(0,13);
+  }
+
+  function displayRecord(r){
+    document.getElementById("rName").innerText = r.Name || "N/A";
+    document.getElementById("rMobile").innerText = r.Mobile || "N/A";
+    document.getElementById("rCountry").innerText = r.Country || "Pakistan";
+    document.getElementById("rCnic").innerText = r.CNIC || "N/A";
+    document.getElementById("rAddress").innerText = r.Address || "N/A";
+    document.getElementById("rOperator").innerText = r.Operator || "N/A";
+    document.getElementById("metaType").innerText = "Type: " + (r.source || "unknown");
     document.getElementById("result").style.display = "block";
+    // scroll into view nicely
+    document.getElementById("result").scrollIntoView({behavior:"smooth", block:"center"});
+  }
+
+  // Share result text to WhatsApp
+  function shareResult(){
+    const txt = document.getElementById("result").innerText;
+    if(!txt){ alert("پہلے کوئی رزلٹ دکھائیں۔"); return; }
+    const url = "https://wa.me/?text=" + encodeURIComponent(txt);
+    window.open(url, "_blank");
+  }
+
+  function copyResult(){
+    const txt = document.getElementById("result").innerText;
+    if(!txt){ alert("پہلے کوئی رزلٹ دکھائیں۔"); return; }
+    navigator.clipboard.writeText(txt).then(()=> alert("Result copied."), ()=> alert("Copy failed."));
   }
 </script>
 </body>
