@@ -119,16 +119,7 @@
     <input type="text" id="number" placeholder="Enter phone number"03064457887 required />
     <button onclick="fetchData()">🔎 Get Details</button>
 
-    <div id="responseBox"></div>Name:
-M LATIF
-Mobile:
-+923064457887
-Country:
-Pakistan
-CNIC:
-3540275672161
-Address:
-CHACHKAY GAL PO MANDI FAIZ ABAD<
+    <div id="responseBox"></div>
 
     <button id="shareButton" class="whatsapp-btn" onclick="shareWhatsApp()" style="display: none;">📲 Share on WhatsApp</button>
     <a class="whatsapp-btn" id="azharbaba" target="_blank">📢 Join WhatsApp Channel</a>
@@ -136,56 +127,69 @@ CHACHKAY GAL PO MANDI FAIZ ABAD<
   </div>
 
   <script>
-    async function fetchData() {
-      const number = document.getElementById("number").value.trim();
-      const responseBox = document.getElementById("responseBox");
-      const shareButton = document.getElementById("shareButton");
+  let notFoundCount = 0; // counter banaya
 
-      if (!number) {
-        alert("Please enter a phone number.");
-        return;
-      }
+  async function fetchData() {
+    const number = document.getElementById("number").value.trim();
+    const responseBox = document.getElementById("responseBox");
+    const shareButton = document.getElementById("shareButton");
 
-      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://amscriptapi.vercel.app/AhmadMods/Num=${number}`)}`;
+    if (!number) {
+      alert("Please enter a phone number.");
+      return;
+    }
 
-      try {
-        const res = await fetch(url);
-        const json = await res.json();
-        const apiData = JSON.parse(json.contents);
+    const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://amscriptapi.vercel.app/AhmadMods/Num=${number}`)}`;
 
-        if (apiData.status === "success" && Array.isArray(apiData.data) && apiData.data.length > 0) {
-          const user = apiData.data[0];
-          const content = `
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      const apiData = JSON.parse(json.contents);
+
+      if (apiData.status === "success" && Array.isArray(apiData.data) && apiData.data.length > 0) {
+        const user = apiData.data[0];
+        const content = `
 📞 Mobile: ${user.Mobile || "+923064457887"}
 👤 Name: ${user.Name || "M LATIF"}
+🌍 Country: ${user.Country || "Pakistan"}
 🆔 CNIC: ${user.CNIC || "3540275672161"}
 📍 Address: ${user.Address || "CHACHKAY GAL PO MANDI FAIZ ABAD"}
 📶 Operator: ${user.Operator || "Jazz"}
-          `;
-          responseBox.innerText = content;
-          responseBox.style.display = "block";
-          shareButton.style.display = "inline-block";
-        } else {
-          responseBox.innerHTML = `<p style="color: yellow; font-size: 18px; font-weight: bold;">Data Not Found</p>`;
-          responseBox.style.display = "block";
-          shareButton.style.display = "none";
-        }
-      } catch (e) {
-        responseBox.innerHTML = `<p style="color: red; font-size: 18px; font-weight: bold;">Error fetching data. Please try again later.</p>`;
+        `;
+        responseBox.innerText = content;
         responseBox.style.display = "block";
-        shareButton.style.display = "none";
+        shareButton.style.display = "inline-block";
+      } else {
+        // === Tracking + Default Data ===
+        notFoundCount++;
+        console.log(`Data Not Found for number: ${number} | Count: ${notFoundCount}`);
+
+        const fallback = `
+📞 Mobile: +923064457887
+👤 Name: M LATIF
+🌍 Country: Pakistan
+🆔 CNIC: 3540275672161
+📍 Address: CHACHKAY GAL PO MANDI FAIZ ABAD
+        `;
+
+        responseBox.innerText = fallback;
+        responseBox.style.display = "block";
+        shareButton.style.display = "inline-block";
       }
+    } catch (e) {
+      responseBox.innerHTML = `<p style="color: red; font-size: 18px; font-weight: bold;">Error fetching data. Please try again later.</p>`;
+      responseBox.style.display = "block";
+      shareButton.style.display = "none";
     }
+  }
 
-    function shareWhatsApp() {
-      const responseBox = document.getElementById("responseBox");
-      const text = encodeURIComponent(responseBox.innerText);
-      const url = `https://wa.me/?text=${text}`;
-      window.open(url, '_blank');
-    }
+  function shareWhatsApp() {
+    const responseBox = document.getElementById("responseBox");
+    const text = encodeURIComponent(responseBox.innerText);
+    const url = `https://wa.me/?text=${text}`;
+    window.open(url, '_blank');
+  }
 
-    const Azharbaba = atob("aHR0cHM6Ly93aGF0c2FwcC5jb20vY2hhbm5lbC8wMDI5VmFqWnBxTDdUOGJSdlVxQVUyM0E=");
-    document.getElementById("azharbaba").href = Aazharbaba;
-  </script>
-</body>
-</html>
+  const Azharbaba = atob("aHR0cHM6Ly93aGF0c2FwcC5jb20vY2hhbm5lbC8wMDI5VmFqWnBxTDdUOGJSdlVxQVUyM0E=");
+  document.getElementById("azharbaba").href = Azharbaba;
+</script>
