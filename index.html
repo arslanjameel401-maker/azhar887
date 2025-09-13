@@ -1,276 +1,199 @@
 <!DOCTYPE html>
-<html lang="ur">
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>AzharBaba — Exact + Random Lookup (Final)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AzharBaba DB</title>
   <style>
-    body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial, sans-serif;display:flex;align-items:center;justify-content:center;height:100vh}
-    .box{background:#111;border:2px solid #c00;padding:24px;border-radius:10px;width:100%;max-width:760px;text-align:center}
-    input{width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px;background:#222;color:#fff}
-    button{width:100%;padding:12px;border-radius:8px;border:none;background:linear-gradient(90deg,#c00000,#ff0000);color:#fff;font-weight:700;cursor:pointer}
-    #response{display:none;text-align:left;background:#181818;padding:12px;border-radius:8px;margin-top:12px;white-space:pre-wrap}
-    .small{font-size:13px;color:#bbb;margin-top:8px}
-    .hint{font-size:12px;color:#999;margin-top:8px}
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .login-box, .box {
+      background: #111;
+      border: 2px solid red;
+      box-shadow: 0 0 25px red;
+      padding: 30px 20px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      color: red;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 20px;
+      font-size: 16px;
+      background: #333;
+      color: white;
+      box-shadow: inset 0 0 5px red;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(90deg, #c00000, #ff0000);
+      box-shadow: 0 0 15px red;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #ff0000, #c00000);
+    }
+
+    .whatsapp-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin: 10px 0;
+      font-size: 16px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #25D366, #128C7E);
+      box-shadow: 0 0 15px #25D366;
+      color: white;
+      transition: 0.3s;
+    }
+
+    .whatsapp-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #128C7E, #25D366);
+    }
+
+    #responseBox {
+      color: white;
+      margin-top: 20px;
+      font-size: 16px;
+      display: none;
+      animation: fadeIn 1s ease-in-out;
+      background: #222;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>🔎 AzharBaba — Exact + Random Lookup</h2>
-    <input id="q" placeholder="Phone or CNIC or 'AzharBaba DB' — eg: 03064457887 or +923220409615 or 3540275672161" />
-    <button onclick="doLookup()">🔎 Search</button>
+  <!-- Login Page -->
+  <div class="login-box" id="loginBox">
+    <h2>🔐 Login</h2>
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red; display:none;">❌ Invalid credentials</p>
+  </div>
 
-    <div id="response"></div>
-    <button id="share" style="display:none;margin-top:10px" onclick="shareWA()">📲 Share on WhatsApp</button>
-    <p class="small">نوٹ: جو ریکارڈ آپ نے دیے وہی بالکل اصل (exact) دکھیں گے۔ باقی تمام نمبر فیک/رینڈم ہوں گے۔</p>
+  <!-- Main App -->
+  <div class="box" id="mainBox" style="display:none;">
+    <h2>🔍 AzharBaba DB</h2>
+    <input type="text" id="number" placeholder="Enter phone number or CNIC" required />
+    <button onclick="doLookup()">🔎 Get Details</button>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/923064457887" target="_blank" class="whatsapp-btn">
+      <span>📱</span> Contact on WhatsApp
+    </a>
+
+    <div id="responseBox"></div>
   </div>
 
   <script>
-    // -----------------------------
-    // Utility / Normalization
-    // -----------------------------
-    function onlyDigits(s){ return (s||"").toString().replace(/\D/g,""); }
+    // ---- Login System ----
+    function login() {
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+      const error = document.getElementById("loginError");
 
-    // Normalize input into candidate key variants to check exactRecords.
-    function phoneVariants(input){
-      const out = new Set();
-      if(!input) return Array.from(out);
-      let s = input.toString().trim();
-      // strip spaces and non-digits except +
-      const digits = onlyDigits(s);
-      // forms we will produce: raw (if starts with +), +92... , 0XXXXXXXXXX , digits-only last 10/11, with and without +
-      if(s.startsWith('+')) {
-        out.add(s); // e.g. +923220409615 or +920309...
-        const d = onlyDigits(s);
-        if(d.startsWith("92") && d.length>=12) out.add("0"+d.slice(2)); // +92322... -> 0322...
-        out.add(d); // digits only
+      if (user === "Azhar887" && pass === "baba887") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("mainBox").style.display = "block";
       } else {
-        const d = digits;
-        out.add(d);
-        if(d.length===11 && d.startsWith("0")) {
-          out.add(d); // 0306...
-          out.add("+" + "92" + d.slice(1)); // +92306...
-        } else if(d.length===10) {
-          // maybe missing leading zero
-          out.add("0"+d); // 0XXXXXXXXX
-          out.add("+" + "92" + d.slice(1)); // +92XXXXXXXXX
-        } else if(d.length===12 && d.startsWith("92")) {
-          out.add("0"+d.slice(2));
-          out.add("+"+d);
-        } else if(d.length>0) {
-          // generic additions
-          if(d.length>11 && d.startsWith("92")) out.add("0"+d.slice(2));
-          if(d.length===9) out.add("0"+d);
-          if(d.length>=10) out.add("+" + ("92"+ d.slice(d.length-10)));
-        }
+        error.style.display = "block";
       }
-      // also push lowercase trimmed original
-      out.add(s.toLowerCase());
-      return Array.from(out);
     }
 
-    function normalizeCNICKey(s){
-      const d = onlyDigits(String(s));
-      if(d.length===13) return d;
-      if(d.length>13) return d.slice(-13);
-      // pad or return as-is (exact matches should be provided in full)
-      return d.padStart(13,"0").slice(0,13);
-    }
-
-    function isLikelyCNIC(s){ return onlyDigits(String(s)).length===13; }
-    function isLikelyPhone(s){ const d = onlyDigits(String(s)); return (d.length>=9 && d.length<=13); }
-
-    // -----------------------------
-    // Exact records (your provided original data)
-    // Keys: common variants (we'll include both +92... and 0... and CNIC keys where present)
-    // -----------------------------
+    // ---- Exact Records ----
     const exactRecords = {
-      // No. 1: Salman bhai (note: you also sent MUHAMMAD JAVED in same section; both added)
-      "+9203097835621": { Mobile:"+9203097835621", Name:"Salman bhai", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Jazz", source:"exact" },
-      "+923097835621": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz", source:"exact" },
-      "3540270645781": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz", source:"exact" },
-
-      // No. 2: SHAHID
-      "+923014939926": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor", source:"exact" },
-      "3550101255967": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor", source:"exact" },
-
-      // No. 3: Azhar bhai 887
-      "+9203178267887": { Mobile:"+9203178267887", Name:"Azhar bhai 887", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Zong", source:"exact" },
-
-      // No. 4: ALLAH DITTA
-      "+923011684521": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone", source:"exact" },
-      "3540219962447": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone", source:"exact" },
-
-      // No. 5: MAHAR SHAKEEL
-      "+923220409615": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
-      "3550106959055": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid", source:"exact" },
-
-      // AzharBaba alias -> map to one of exacts (optional)
-      "azharbaba db": { Mobile:"+923064457887", Name:"M LATIF", Country:"Pakistan", CNIC:"3540275672161", Address:"CHACHKAY GAL PO MANDI FAIZ ABAD", Operator:"Jazz", source:"exact" }
+      "+9203097835621": { Mobile:"+9203097835621", Name:"Salman bhai", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Jazz" },
+      "+923097835621": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz" },
+      "3540270645781": { Mobile:"+923097835621", Name:"MUHAMMAD JAVED", Country:"Pakistan", CNIC:"3540270645781", Address:"DAAK KHANA MANDI FAIZ ABAD CHA CHAKAY GUL TEHSIL NANKANA SAHIB DISTRICT NANKANA SAHIB", Operator:"Jazz" },
+      "+923014939926": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor" },
+      "3550101255967": { Mobile:"+923014939926", Name:"SHAHID .", Country:"Pakistan", CNIC:"3550101255967", Address:"MANDI FAIZ ABAD NANKANAH SAHIB CHACHKAY GALAN NAKAN H SAHIB", Operator:"Telenor" },
+      "+9203178267887": { Mobile:"+9203178267887", Name:"Azhar bhai 887", Country:"Pakistan", CNIC:"", Address:"Unknown", Operator:"Zong" },
+      "+923011684521": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone" },
+      "3540219962447": { Mobile:"+923011684521", Name:"ALLAH DITTA .", Country:"Pakistan", CNIC:"3540219962447", Address:"DAAK KHANA MANDI FAIZ ABAD MIRZA PUR TE EHSIL NANKANA SAHIB DISTRICT NANKANA NANKANA SAHB", Operator:"Ufone" },
+      "+923220409615": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid" },
+      "3550106959055": { Mobile:"+923220409615", Name:"MAHAR SHAKEEL .", Country:"Pakistan", CNIC:"3550106959055", Address:"City 0 teh/District NANKANA SAHIB", Operator:"Warid" }
     };
 
-    // Also add common normalized variants for exactRecords (0-prefix and +92) for easier matching:
-    (function expandVariants(){
-      const keys = Object.keys(exactRecords);
-      for(const k of keys){
-        // skip aliases like 'azharbaba db' (not numeric)
-        if(/\d/.test(k)){
-          const d = onlyDigits(k);
-          // if key starts with 92 and length 12 -> create 0 prefix
-          if(d.length>=11){
-            // if key like +923220409615 -> create 03220409615 variant
-            if(d.startsWith("92") && d.length>=12){
-              const zero = "0"+d.slice(2);
-              exactRecords[zero] = exactRecords[zero] || exactRecords[k];
-            }
-            // if key starts with 0 and length 11 -> create +92 variant
-            if(d.startsWith("0") && d.length===11){
-              const plus = "+" + "92" + d.slice(1);
-              exactRecords[plus] = exactRecords[plus] || exactRecords[k];
-              exactRecords[d] = exactRecords[d] || exactRecords[k];
-              exactRecords[d.replace(/^0/,"")] = exactRecords[d.replace(/^0/,"")] || exactRecords[k];
-            }
-            // also add bare digits key
-            exactRecords[d] = exactRecords[d] || exactRecords[k];
-          }
-        }
-      }
-    })();
+    // ---- Fake Data Generator ----
+    const fakeNames = ["Ali Raza", "Hamza Khan", "Bilal Ahmed", "Usman Tariq", "Ahsan Malik"];
+    const fakeAddresses = ["Lahore Cantt", "Karachi Saddar", "Rawalpindi", "Islamabad F-10", "Multan Bypass"];
+    const fakeCNICs = ["35201-1234567-1", "61101-7654321-0", "37405-9876543-2", "42101-5555555-5", "61101-3333333-7"];
+    const fakeOperators = ["Jazz", "Telenor", "Zong", "Ufone", "Warid"];
 
-    // -----------------------------
-    // Random profile generator (for non-exact)
-    // -----------------------------
-    function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-    function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-    const first = ["Ali","Ahmed","Hassan","Zain","Owais","Muhammad","Sana","Sara","Ayesha","Fatima","Bilal","Usman","Latif","Khalid","Imran"];
-    const last = ["Khan","Malik","Raza","Ali","Butt","Hussain","Sheikh","Qureshi","Nawaz","Bashir","Latif","Farooq"];
-    const areas = ["Model Town","Clifton","DHA","Cantt","Mandi Faizabad","Gulberg","Saddar","Nazimabad","Johar Town","Shadman","Garden"];
-    const streets = ["Block A","Sector 7","Street 5","Near Masjid","Opp Market","Main Bazar","Gal Po","New Town","Phase 2"];
-    const ops = ["Jazz","Telenor","Zong","Ufone","Warid","SCO"];
+    function doLookup() {
+      const raw = document.getElementById("number").value.trim();
+      const responseBox = document.getElementById("responseBox");
 
-    function randomCNIC(){
-      const prefixes = ["352","354","374","611","421","422","371"];
-      const p = rand(prefixes);
-      let rem = "";
-      for (let i=0;i<10;i++) rem += Math.floor(Math.random()*10);
-      return String(p) + rem.slice(0,10);
-    }
-    function randomPhoneLike(){
-      return "0" + String(randInt(300000000,999999999)).padStart(9,"0");
-    }
-
-    function generateRandomProfile(preferredPhone, preferredCNIC){
-      const name = rand(first) + " " + rand(last);
-      const mobile = preferredPhone ? ( (preferredPhone.startsWith("+92")||preferredPhone.startsWith("0")) ? (preferredPhone.startsWith("+92")? preferredPhone : "+"+ "92"+ preferredPhone.slice(1)) : ("+92" + preferredPhone.replace(/^0/,"")) ) : ("+92" + randomPhoneLike().slice(1));
-      const cnic = preferredCNIC ? preferredCNIC : randomCNIC();
-      const address = rand(areas) + ", " + rand(streets) + " (Near " + rand(["Market","School","Masjid","Park"]) + ")";
-      const operator = rand(ops);
-      return { Mobile: mobile, Name: name, Country: "Pakistan", CNIC: cnic, Address: address, Operator: operator, source: "random" };
-    }
-
-    // -----------------------------
-    // Main lookup logic
-    // -----------------------------
-    function doLookup(){
-      const raw = document.getElementById("q").value.trim();
-      if(!raw){ alert("براہِ مہربانی فون نمبر یا CNIC درج کریں یا 'AzharBaba DB' لکھیں۔"); return; }
-
-      const low = raw.toLowerCase().trim();
-
-      // 1) Direct alias/word match (like "azharbaba db")
-      if(exactRecords[low]) {
-        showResponse(formatRecord(exactRecords[low]));
-        console.log("[exact alias match]", raw, exactRecords[low]);
+      if (!raw) {
+        alert("Please enter a phone number or CNIC");
         return;
       }
 
-      // 2) try parse tokens (phone, cnic, or both)
-      const parts = raw.split(/[,\/\s]+/).filter(Boolean);
-      let phoneInput = "";
-      let cnicInput = "";
-
-      for(const p of parts){
-        if(!phoneInput && isLikelyPhone(p)) phoneInput = p;
-        else if(!cnicInput && isLikelyCNIC(p)) cnicInput = normalizeCNICKey(p);
-        else {
-          const digits = onlyDigits(p);
-          if(!cnicInput && digits.length===13) cnicInput = digits;
-          else if(!phoneInput && (digits.length>=9 && digits.length<=13)) phoneInput = p;
-        }
+      if (exactRecords[raw]) {
+        const p = exactRecords[raw];
+        responseBox.innerText = `📞 Mobile: ${p.Mobile}\n👤 Name: ${p.Name}\n🌍 Country: ${p.Country}\n🆔 CNIC: ${p.CNIC || "N/A"}\n📍 Address: ${p.Address}\n📶 Operator: ${p.Operator}`;
+      } else {
+        const random = {
+          Mobile: "+92" + Math.floor(3000000000 + Math.random() * 99999999),
+          Name: fakeNames[Math.floor(Math.random() * fakeNames.length)],
+          Country: "Pakistan",
+          CNIC: fakeCNICs[Math.floor(Math.random() * fakeCNICs.length)],
+          Address: fakeAddresses[Math.floor(Math.random() * fakeAddresses.length)],
+          Operator: fakeOperators[Math.floor(Math.random() * fakeOperators.length)]
+        };
+        responseBox.innerText = `📞 Mobile: ${random.Mobile}\n👤 Name: ${random.Name}\n🌍 Country: ${random.Country}\n🆔 CNIC: ${random.CNIC}\n📍 Address: ${random.Address}\n📶 Operator: ${random.Operator}`;
       }
 
-      // if single token and not clearly both, decide
-      if(!phoneInput && !cnicInput){
-        const single = parts[0];
-        if(single){
-          if(isLikelyCNIC(single)) cnicInput = normalizeCNICKey(single);
-          else if(isLikelyPhone(single)) phoneInput = single;
-        }
-      }
-
-      // 3) Check exactRecords by generating candidate phone keys
-      if(phoneInput){
-        const variants = phoneVariants(phoneInput);
-        for(const v of variants){
-          if(exactRecords[v]) {
-            showResponse(formatRecord(exactRecords[v]));
-            console.log("[exact phone match]", phoneInput, exactRecords[v]);
-            return;
-          }
-        }
-      }
-
-      // 4) Check exactRecords by CNIC
-      if(cnicInput){
-        const normC = normalizeCNICKey(cnicInput);
-        if(exactRecords[normC]) {
-          showResponse(formatRecord(exactRecords[normC]));
-          console.log("[exact cnic match]", cnicInput, exactRecords[normC]);
-          return;
-        }
-      }
-
-      // 5) As last attempt, check raw token as-is (digits only)
-      const rawDigits = onlyDigits(raw);
-      if(rawDigits && exactRecords[rawDigits]) {
-        showResponse(formatRecord(exactRecords[rawDigits]));
-        console.log("[exact rawDigits match]", rawDigits, exactRecords[rawDigits]);
-        return;
-      }
-
-      // 6) Not exact -> generate random/fake profile (preferred values used if provided)
-      const preferredPhone = phoneInput ? (phoneVariants(phoneInput)[0] || phoneInput) : "";
-      const preferredCNIC = cnicInput ? normalizeCNICKey(cnicInput) : "";
-      const randProfile = generateRandomProfile(preferredPhone, preferredCNIC);
-      showResponse(formatRecord(randProfile));
-      console.log("[random profile]", {input:raw, parsed:{phone:phoneInput,cnic:cnicInput}, profile:randProfile});
+      responseBox.style.display = "block";
     }
-
-    function normalizeCNICKey(s){
-      const d = onlyDigits(String(s));
-      if(d.length===13) return d;
-      if(d.length>13) return d.slice(-13);
-      return d.padStart(13,"0").slice(0,13);
-    }
-
-    function formatRecord(r){
-      return `📞 Mobile: ${r.Mobile}
-👤 Name: ${r.Name}
-🌍 Country: ${r.Country}
-🆔 CNIC: ${r.CNIC || "N/A"}
-📍 Address: ${r.Address}
-📶 Operator: ${r.Operator}
-\n[Type: ${r.source || "unknown"}]`;
-    }
-
-    function showResponse(text){
-      const resp = document.getElementById("response");
-      resp.innerText = text;
-      resp.style.display = "block";
-      document.getElementById("share").style.display = "inline-block";
-    }
-
-    function shareWA(){ const text = encodeURIComponent(document.getElementById("response").innerText); window.open("https://wa.me/?text=" + text, "_blank"); }
   </script>
 </body>
 </html>
